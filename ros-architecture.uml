@@ -1,0 +1,57 @@
+@startuml ros-architecture.png
+skinparam usecase {
+  BorderColor black
+}
+
+rectangle commands as command1 {
+  "roscore"
+
+}
+
+rectangle commands as command2 {
+  "rosnode"
+  "rosrun"
+  "rosservice"
+  "rosparam"
+  "rostopic"
+
+  package "package rqt" {
+    "rqt_console"
+  }
+}
+
+frame master {
+  database parameter as "parameter server"
+
+  rectangle services {
+    interface "/rosout/..." as srosout
+  }
+
+  rectangle nodes {
+    (/rosout) as nrosout
+  }
+  
+  rectangle topics {
+    rectangle "/rosout_agg" as trosout
+  }
+}
+
+roscore .down.> master : create
+
+rosrun .up.> nodes : create a node
+rosnode .up.> nodes : show node information\n/list nodes\n/ping node
+
+rosparam ..> parameter : get/set parameter
+
+roscore .down.> nrosout : create
+nrosout .up.> srosout : create
+
+nrosout .down.> trosout : publish\nmessage\n(log)
+
+rosservice .up.> nodes : list/find/call services
+
+rqt_console .up.> trosout : subscribe\nmessage\n(log)
+
+rostopic .up.> topics : show topic information\n/echo message\n/list topics\n/publish data
+
+@enduml
