@@ -8,6 +8,8 @@ Vagrant.configure(2) do |config|
     vb.gui = true
   end
 
+  config.vm.synced_folder Dir.pwd, "/home/vagrant/work"
+
   config.vm.provision "shell", inline: <<-SHELL
      sudo apt-get update
      sudo apt-get upgrade
